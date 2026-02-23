@@ -2,123 +2,192 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>INDIGITABLE REPLACER</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 0px;
+        }
+
+        #loginScreen {
+            margin-top: 100px;
+        }
+
+        input[type="password"] {
+            padding: 8px;
+            width: 200px;
+        }
+
+        button {
+            padding: 8px 14px;
+            margin: 0px;
+            cursor: pointer;
+        }
+
+        textarea {
+            margin-top: 0px;
+        }
+
+        #errorMessage {
+            color: red;
+        }
+    </style>
 </head>
+
 <body>
-    <h2>INDIGITABLE REPLACER</h2>
-    <p>Upload a file or type text directly:</p>
-    <input type="file" id="inputFile" accept=".txt">
-    <br><br>
-    <textarea id="directInput" rows="32" cols="256" placeholder="Type your text here..."></textarea>
-    <br><br>
-    <button onclick="replaceCharacters()">Replace Characters</button>
-    <button onclick="copyToClipboard()">Copy to Clipboard</button>
-    <button onclick="replaceAndCopy()">Replace and Copy</button> <!-- New Button -->
-    <p>Output:</p>
-    <textarea id="outputArea" rows="32" cols="256"></textarea>
 
-    <script>
-        // Character index
-        const characterIndex = {
-            "A": "Α",
-            "B": "Β",
-            "C": "Ϲ",
-            "E": "Ε",
-            "H": "Η",
-            "I": "Ι",
-            "J": "Ј",
-            "K": "Κ",
-            "M": "Μ",
-            "N": "Ν",
-            "O": "Ο",
-            "P": "Ρ",
-            "Q": "Ԛ",
-            "S": "Ѕ",
-            "T": "Τ",
-            "W": "Ԝ",
-            "X": "Χ",
-            "Y": "Υ",
-            "Z": "Ζ",
-            "a": "а",
-            "c": "ϲ",
-            "e": "е",
-            "i": "і",
-            "j": "ϳ",
-            "o": "ο",
-            "p": "р",
-            "q": "ԛ",
-            "s": "ѕ",
-            "v": "ν",
-            "w": "ԝ",
-            "x": "х",
-            "y": "у"
-        };
+    <!-- PASSWORD SCREEN -->
+    <div id="loginScreen">
+        <h2>Enter Password</h2>
+        <input type="password" id="passwordInput" placeholder="Password">
+        <br><br>
+        <button onclick="checkPassword()">Enter</button>
+        <p id="errorMessage"></p>
+    </div>
 
-        function replaceCharacters() {
-            let text = '';
-            const inputFile = document.getElementById('inputFile').files[0];
-            if (inputFile) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    text = e.target.result;
-                    processText(text);
-                };
-                reader.readAsText(inputFile);
-            } else {
-                text = document.getElementById('directInput').value;
+    <!-- MAIN APPLICATION (HIDDEN UNTIL LOGIN) -->
+    <div id="appContent" style="display:none;">
+
+        <h2>INDIGITABLE REPLACER</h2>
+        <p>Upload a file or type text directly:</p>
+
+        <input type="file" id="inputFile" accept=".txt">
+        <br><br>
+
+        <textarea id="directInput" rows="32" cols="256" placeholder="Type your text here..."></textarea>
+        <br><br>
+
+        <button onclick="replaceCharacters()">Replace Characters</button>
+        <button onclick="copyToClipboard()">Copy to Clipboard</button>
+        <button onclick="replaceAndCopy()">Replace and Copy</button>
+
+        <p>Output:</p>
+        <textarea id="outputArea" rows="32" cols="256"></textarea>
+
+    </div>
+
+<script>
+
+    const correctPassword = "MICOTOCAVEA";
+
+    function checkPassword() {
+        const enteredPassword = document.getElementById("passwordInput").value;
+
+        if (enteredPassword === correctPassword) {
+            document.getElementById("loginScreen").style.display = "none";
+            document.getElementById("appContent").style.display = "block";
+        } else {
+            document.getElementById("errorMessage").textContent = "Incorrect password!";
+        }
+    }
+
+    const characterIndex = {
+        "A": "Α",
+        "B": "Β",
+        "C": "Ϲ",
+        "E": "Ε",
+        "H": "Η",
+        "I": "Ι",
+        "J": "Ј",
+        "K": "Κ",
+        "M": "Μ",
+        "N": "Ν",
+        "O": "Ο",
+        "P": "Ρ",
+        "Q": "Ԛ",
+        "S": "Ѕ",
+        "T": "Τ",
+        "W": "Ԝ",
+        "X": "Χ",
+        "Y": "Υ",
+        "Z": "Ζ",
+        "a": "а",
+        "c": "ϲ",
+        "e": "е",
+        "i": "і",
+        "j": "ϳ",
+        "o": "ο",
+        "p": "р",
+        "q": "ԛ",
+        "s": "ѕ",
+        "v": "ν",
+        "w": "ԝ",
+        "x": "х",
+        "y": "у"
+    };
+
+    function replaceCharacters() {
+        let text = '';
+        const inputFile = document.getElementById('inputFile').files[0];
+
+        if (inputFile) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                text = e.target.result;
                 processText(text);
-            }
+            };
+            reader.readAsText(inputFile);
+        } else {
+            text = document.getElementById('directInput').value;
+            processText(text);
         }
+    }
 
-        function processText(text) {
-            const replacedText = replaceText(text);
-            document.getElementById('outputArea').value = replacedText;
-        }
+    function processText(text) {
+        const replacedText = replaceText(text);
+        document.getElementById('outputArea').value = replacedText;
+    }
 
-        function replaceText(text) {
-            let replacedText = '';
-            for (let i = 0; i < text.length; i++) {
-                const char = text[i];
-                if (characterIndex[char] !== undefined) {
-                    replacedText += characterIndex[char];
-                } else {
-                    replacedText += char;
-                }
-            }
-            return replacedText;
-        }
-
-        function copyToClipboard() {
-            const outputText = document.getElementById('outputArea').value;
-            navigator.clipboard.writeText(outputText)
-                .then(() => {
-                    alert('Text copied to clipboard!');
-                })
-                .catch(err => {
-                    alert('Failed to copy text: ' + err);
-                });
-        }
-
-        function replaceAndCopy() {
-            let text = '';
-            const inputFile = document.getElementById('inputFile').files[0];
-            if (inputFile) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    text = e.target.result;
-                    const replacedText = replaceText(text);
-                    document.getElementById('outputArea').value = replacedText;
-                    copyToClipboard();
-                };
-                reader.readAsText(inputFile);
+    function replaceText(text) {
+        let replacedText = '';
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            if (characterIndex[char] !== undefined) {
+                replacedText += characterIndex[char];
             } else {
-                text = document.getElementById('directInput').value;
+                replacedText += char;
+            }
+        }
+        return replacedText;
+    }
+
+    function copyToClipboard() {
+        const outputText = document.getElementById('outputArea').value;
+
+        navigator.clipboard.writeText(outputText)
+            .then(() => {
+                alert('Text copied to clipboard!');
+            })
+            .catch(err => {
+                alert('Failed to copy text: ' + err);
+            });
+    }
+
+    function replaceAndCopy() {
+        let text = '';
+        const inputFile = document.getElementById('inputFile').files[0];
+
+        if (inputFile) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                text = e.target.result;
                 const replacedText = replaceText(text);
                 document.getElementById('outputArea').value = replacedText;
                 copyToClipboard();
-            }
+            };
+            reader.readAsText(inputFile);
+        } else {
+            text = document.getElementById('directInput').value;
+            const replacedText = replaceText(text);
+            document.getElementById('outputArea').value = replacedText;
+            copyToClipboard();
         }
-    </script>
+    }
+
+</script>
+
 </body>
 </html>
