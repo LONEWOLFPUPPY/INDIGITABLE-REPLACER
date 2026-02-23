@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INDIGITABLE REPLACER</title>
+</head>
+<body>
+    <h2>INDIGITABLE REPLACER</h2>
+    <p>Upload a file or type text directly:</p>
+    <input type="file" id="inputFile" accept=".txt">
+    <br><br>
+    <textarea id="directInput" rows="32" cols="256" placeholder="Type your text here..."></textarea>
+    <br><br>
+    <button onclick="replaceCharacters()">Replace Characters</button>
+    <button onclick="copyToClipboard()">Copy to Clipboard</button>
+    <button onclick="replaceAndCopy()">Replace and Copy</button> <!-- New Button -->
+    <p>Output:</p>
+    <textarea id="outputArea" rows="32" cols="256"></textarea>
+
+    <script>
+        // Character index
+        const characterIndex = {
+            "A": "Α",
+            "B": "Β",
+            "C": "Ϲ",
+            "E": "Ε",
+            "H": "Η",
+            "I": "Ι",
+            "J": "Ј",
+            "K": "Κ",
+            "M": "Μ",
+            "N": "Ν",
+            "O": "Ο",
+            "P": "Ρ",
+            "Q": "Ԛ",
+            "S": "Ѕ",
+            "T": "Τ",
+            "W": "Ԝ",
+            "X": "Χ",
+            "Y": "Υ",
+            "Z": "Ζ",
+            "a": "а",
+            "c": "ϲ",
+            "e": "е",
+            "i": "і",
+            "j": "ϳ",
+            "o": "ο",
+            "p": "р",
+            "q": "ԛ",
+            "s": "ѕ",
+            "v": "ν",
+            "w": "ԝ",
+            "x": "х",
+            "y": "у"
+        };
+
+        function replaceCharacters() {
+            let text = '';
+            const inputFile = document.getElementById('inputFile').files[0];
+            if (inputFile) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    text = e.target.result;
+                    processText(text);
+                };
+                reader.readAsText(inputFile);
+            } else {
+                text = document.getElementById('directInput').value;
+                processText(text);
+            }
+        }
+
+        function processText(text) {
+            const replacedText = replaceText(text);
+            document.getElementById('outputArea').value = replacedText;
+        }
+
+        function replaceText(text) {
+            let replacedText = '';
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (characterIndex[char] !== undefined) {
+                    replacedText += characterIndex[char];
+                } else {
+                    replacedText += char;
+                }
+            }
+            return replacedText;
+        }
+
+        function copyToClipboard() {
+            const outputText = document.getElementById('outputArea').value;
+            navigator.clipboard.writeText(outputText)
+                .then(() => {
+                    alert('Text copied to clipboard!');
+                })
+                .catch(err => {
+                    alert('Failed to copy text: ' + err);
+                });
+        }
+
+        function replaceAndCopy() {
+            let text = '';
+            const inputFile = document.getElementById('inputFile').files[0];
+            if (inputFile) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    text = e.target.result;
+                    const replacedText = replaceText(text);
+                    document.getElementById('outputArea').value = replacedText;
+                    copyToClipboard();
+                };
+                reader.readAsText(inputFile);
+            } else {
+                text = document.getElementById('directInput').value;
+                const replacedText = replaceText(text);
+                document.getElementById('outputArea').value = replacedText;
+                copyToClipboard();
+            }
+        }
+    </script>
+</body>
+</html>
