@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>INDIGITABLE REPLACER (HOMOGLYPHS)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 0px;
+        }
+
+        #loginScreen {
+            margin-top: 100px;
+        }
+
+        input[type="password"] {
+            padding: 8px;
+            width: 200px;
+        }
+
+        button {
+            padding: 8px 14px;
+            margin: 0px;
+            cursor: pointer;
+        }
+
+        textarea {
+            margin-top: 0px;
+        }
+
+        #errorMessage {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="loginScreen">
+        <h2>Enter Password</h2>
+        <input type="password" id="passwordInput" placeholder="Password">
+        <br><br>
+        <button onclick="checkPassword()">Enter</button>
+        <p id="errorMessage"></p>
+    </div>
+
+    <div id="appContent" style="display:none;">
+
+        <h2>INDIGITABLE REPLACER (HOMOGLYPHS)</h2>
+        <p>Upload a file or type text directly:</p>
+
+        <input type="file" id="inputFile" accept=".txt">
+        <br><br>
+
+        <textarea id="directInput" rows="32" cols="256" placeholder="Type your text here..."></textarea>
+        <br><br>
+
+        <button onclick="replaceCharacters()">Replace Characters</button>
+        <button onclick="copyToClipboard()">Copy to Clipboard</button>
+        <button onclick="replaceAndCopy()">Replace and Copy</button>
+
+        <p>Output:</p>
+        <textarea id="outputArea" rows="32" cols="256"></textarea>
+
+    </div>
+
+<script>
+
+    const correctPassword = "MICOTOCAVEA";
+
+    function checkPassword() {
+        const enteredPassword = document.getElementById("passwordInput").value;
+
+        if (enteredPassword === correctPassword) {
+            document.getElementById("loginScreen").style.display = "none";
+            document.getElementById("appContent").style.display = "block";
+        } else {
+            document.getElementById("errorMessage").textContent = "Incorrect password!";
+        }
+    }
+
+    const characterIndex = {
+        "A": "󠁁",
+        "B": "󠁂",
+        "C": "󠁃",
+        "D": "󠁄",
+        "E": "󠁅",
+        "F": "󠁆",
+        "G": "󠁇",
+        "H": "󠁈",
+        "I": "󠁉",
+        "J": "󠁊",
+        "K": "󠁋",
+        "L": "󠁌",
+        "M": "󠁍",
+        "N": "󠁎",
+        "O": "󠁏",
+        "P": "󠁐",
+        "Q": "󠁑",
+        "R": "󠁒",
+        "S": "󠁓",
+        "T": "󠁔",
+        "U": "󠁕",
+        "V": "󠁖",
+        "W": "󠁗",
+        "X": "󠁘",
+        "Y": "󠁙",
+        "Z": "󠁚",
+        "a": "󠁡",
+        "b": "󠁢",
+        "c": "󠁣",
+        "d": "󠁤",
+        "e": "󠁥",
+        "f": "󠁦",
+        "g": "󠁧",
+        "h": "󠁨",
+        "i": "󠁩",
+        "j": "󠁪",
+        "k": "󠁫",
+        "l": "󠁬",
+        "m": "󠁭",
+        "n": "󠁮",
+        "o": "󠁯",
+        "p": "󠁰",
+        "q": "󠁱",
+        "r": "󠁲",
+        "s": "󠁳",
+        "t": "󠁴",
+        "u": "󠁵",
+        "v": "󠁶",
+        "w": "󠁷",
+        "x": "󠁸",
+        "y": "󠁹",
+        "z": "󠁺",
+        "!": "󠀡",
+        """: "󠀢",
+        "№": "󠀣",
+        "$": "󠀤",
+        "%": "󠀥",
+        "&": "󠀦",
+        "'": "󠀧",
+        "(": "󠀨",
+        ")": "󠀩",
+        "*": "󠀪",
+        "+": "󠀫",
+        ",": "󠀬",
+        "-": "󠀭",
+        ".": "󠀮",
+        "/": "󠀯",
+        "0": "󠀰",
+        "1": "󠀱",
+        "2": "󠀲",
+        "3": "󠀳",
+        "4": "󠀴",
+        "5": "󠀵",
+        "6": "󠀶",
+        "7": "󠀷",
+        "8": "󠀸",
+        "9": "󠀹",
+        ":": "󠀺",
+        ";": "󠀻",
+        "<": "󠀼",
+        "=": "󠀽",
+        ">": "󠀾",
+        "?": "󠀿",
+        "@": "󠁀",
+        "[": "󠁛",
+        "\": "󠁜",
+        "]": "󠁝",
+        "^": "󠁞",
+        "_": "󠁟",
+        "`": "󠁠",
+        "{": "󠁻",
+        "|": "󠁼",
+        "}": "󠁽",
+        "~": "󠁾"
+    };
+
+    function replaceCharacters() {
+        let text = '';
+        const inputFile = document.getElementById('inputFile').files[0];
+
+        if (inputFile) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                text = e.target.result;
+                processText(text);
+            };
+            reader.readAsText(inputFile);
+        } else {
+            text = document.getElementById('directInput').value;
+            processText(text);
+        }
+    }
+
+    function processText(text) {
+        const replacedText = replaceText(text);
+        document.getElementById('outputArea').value = replacedText;
+    }
+
+    function replaceText(text) {
+        let replacedText = '';
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            if (characterIndex[char] !== undefined) {
+                replacedText += characterIndex[char];
+            } else {
+                replacedText += char;
+            }
+        }
+        return replacedText;
+    }
+
+    function copyToClipboard() {
+        const outputText = document.getElementById('outputArea').value;
+
+        navigator.clipboard.writeText(outputText)
+            .then(() => {
+                alert('Text copied to clipboard!');
+            })
+            .catch(err => {
+                alert('Failed to copy text: ' + err);
+            });
+    }
+
+    function replaceAndCopy() {
+        let text = '';
+        const inputFile = document.getElementById('inputFile').files[0];
+
+        if (inputFile) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                text = e.target.result;
+                const replacedText = replaceText(text);
+                document.getElementById('outputArea').value = replacedText;
+                copyToClipboard();
+            };
+            reader.readAsText(inputFile);
+        } else {
+            text = document.getElementById('directInput').value;
+            const replacedText = replaceText(text);
+            document.getElementById('outputArea').value = replacedText;
+            copyToClipboard();
+        }
+    }
+
+</script>
+
+</body>
+</html>
